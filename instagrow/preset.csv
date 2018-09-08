@@ -1,0 +1,6 @@
+min_likes,4
+max_likes,30
+max_follower_count,2500
+min_similarity,0.12
+num_of_days_to_follow,10
+max_daily_likes,1000
