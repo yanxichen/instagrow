@@ -55,7 +55,7 @@ class InstaGrow:
         login_data = dict(username=self.user, password=self.password, allow_redirects=True)
         login = self.session.post(LOGIN_URL, data=login_data, headers={'Referer': 'https://www.instagram.com/'})
         self.session.headers.update({'X-CSRFToken': csrftoken})
-        print(login.cookies['csrftoken'])
+        # print(login.cookies['csrftoken'])
         page = self.session.get(BASE_URL)
         if login.status_code == 200:
             if page.text.find('not-logged-in') == -1:
