@@ -50,11 +50,11 @@ class InstaGrow:
             'user-agent': self.user_agent
                                      })
         r = self.session.get(BASE_URL)
-        csrftoken = re.search('(?<=\"csrf_token\":\")\w+', r.text).group(0)
-        self.session.headers.update({'X-CSRFToken': csrftoken})
+        # csrftoken = re.search('(?<=\"csrf_token\":\")\w+', r.text).group(0)
+        self.session.headers.update({'X-CSRFToken': r.cookies['csrftoken']})
         login_data = dict(username=self.user, password=self.password, allow_redirects=True)
         login = self.session.post(LOGIN_URL, data=login_data, headers={'Referer': 'https://www.instagram.com/'})
-        self.session.headers.update({'X-CSRFToken': csrftoken})
+        self.session.headers.update({'X-CSRFToken': login.cookies['csrftoken']})
         # print(login.cookies['csrftoken'])
         page = self.session.get(BASE_URL)
         if login.status_code == 200:
@@ -200,9 +200,12 @@ class InstaGrow:
             print('Already liked ' + media_id)
         elif media_id not in self.liked_list_current:
             like_url = LIKE_URL % media_id
-            self.session.post(like_url)
-            self.like_count += 1
-            self.liked_list_current.append(media_id)
+            like_status = self.session.post(like_url)
+            if like_status.status_code == 200:
+                self.like_count += 1
+                self.liked_list_current.append(media_id)
+            else:
+                print('Cannot like post')
 
     def follow(self, user_id):
         if self.logged_in:
